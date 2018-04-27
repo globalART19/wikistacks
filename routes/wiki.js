@@ -16,14 +16,12 @@ router.get('/', (req, res, next) => {
 
 router.post('/', async (req, res, next) => {
     try {
-        //console.log(req.body)
         const page = new Page({
             title: req.body.title,
-            content: req.body.content,
-            slug: slugConverter(req.body.title)
+            content: req.body.content
         })
-        //res.json(req.body);
         await page.save();
+        console.log(page)
         res.redirect('/');
     } catch (err) {
         next(err);
@@ -37,10 +35,5 @@ router.get('/add', (req, res, next) => {
         next(err);
     }
 });
-
-function slugConverter(title){
-  return title.replace(/\s+/g,'_').replace(/\W/g,'');
-}
-
 
 module.exports = router;
