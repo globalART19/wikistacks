@@ -1,5 +1,7 @@
 const Sequelize = require('sequelize')
-const db = new Sequelize('postgres://localhost:5432/wikistack')
+const db = new Sequelize('postgres://localhost:5432/wikistack',{
+  logging: false
+});
 
 async function dbAuthenticator() {
   await db.authenticate().then(() => { console.log('connected to database') })
@@ -7,9 +9,18 @@ async function dbAuthenticator() {
 dbAuthenticator()
 
 const Page = db.define('page', {
-  title: Sequelize.STRING,
-  slug: Sequelize.STRING,
-  content: Sequelize.TEXT,
+  title: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  slug: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  content: {
+    type: Sequelize.TEXT,
+    allowNull: false
+  },
   status: Sequelize.ENUM('open', 'closed')
 })
 
@@ -20,8 +31,11 @@ const User = db.define('user', {
   },
   email: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
+    validate: {
+      isEmail: true
+    }
   }
 })
 
-module.exports = { Page, User }
+module.exports = { db, Page, User }
