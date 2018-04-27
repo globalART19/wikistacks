@@ -8,6 +8,7 @@ const models = require('./models')
 const main = require('./views/main');
 
 app.use(morgan('dev'));
+app.use(bodyParser());
 
 app.use(express.static(__dirname + '/public'));
 
@@ -16,7 +17,7 @@ app.use('/wiki', wiki);
 
 app.get('/', (req, res, next) => {
   try {
-    res.send(main(''));
+    res.redirect('/wiki');
   } catch (err) {
     next(err);
   }
