@@ -1,11 +1,16 @@
 const Sequelize = require('sequelize')
 const db = new Sequelize('postgres://localhost:5432/wikistack')
 
+async function dbAuthenticator() {
+  await db.authenticate().then(() => { console.log('connected to database') })
+}
+dbAuthenticator()
+
 const Page = db.define('page', {
   title: Sequelize.STRING,
   slug: Sequelize.STRING,
-  content: Sequelize.STRING,
-  status: Sequelize.BOOLEAN
+  content: Sequelize.TEXT,
+  status: Sequelize.ENUM('open', 'closed')
 })
 
 const User = db.define('user', {
@@ -19,6 +24,4 @@ const User = db.define('user', {
   }
 })
 
-module.exports = {
-  db
-}
+module.exports = { Page, User }
