@@ -13,7 +13,7 @@ app.use(bodyParser());
 app.use(express.static(__dirname + '/public'));
 
 app.use('/wiki', wiki);
-app.use('/user', user);
+app.use('/users', user);
 
 app.get('/', (req, res, next) => {
   try {

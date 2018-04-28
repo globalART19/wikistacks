@@ -44,7 +44,10 @@ router.get('/:slug', async (req, res, next) => {
             where:
                 { slug: req.params.slug }
         })
-        const author = await User.findById(page.authorId)
+        console.log('req.query object', req.query)
+        console.log('req.query.name', req.query.name)
+        console.log('query of db', await User.findAll({ where: { name: req.query.name } }))
+        const author = await page.getAuthor()
         res.send(wikiPage(page, author));
     } catch (err) {
         next(err);
