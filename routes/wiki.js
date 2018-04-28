@@ -2,13 +2,13 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const express = require('express');
 const router = express.Router();
-//const main = require('../views/main');
-const { Page } = require('../models');
-const { addPage, editPage, main, userList, userPages, wikiPage } = require('../views');
+const { Page, User } = require('../models');
+const { addPage, editPage, main, wikiPage } = require('../views');
 
-router.get('/', (req, res, next) => {
+router.get('/', async (req, res, next) => {
     try {
-        res.send(main(''));
+        const allPages = await Page.findAll()
+        res.send(main(allPages));
     } catch (err) {
         next(err);
     }
@@ -16,13 +16,15 @@ router.get('/', (req, res, next) => {
 
 router.post('/', async (req, res, next) => {
     try {
-        const page = new Page({
-            title: req.body.title,
-            content: req.body.content
+        const [author, wasCreated] = await User.findOrCreate({
+            where: {
+                name: req.body.name,
+                email: req.body.email
+            }
         })
-        await page.save();
-        console.log(page)
-        res.redirect('/');
+        const page = await Page.create(req.body)
+        page.setAuthor(author)
+        res.redirect(`/wiki/${page.slug}`);
     } catch (err) {
         next(err);
     }
@@ -31,6 +33,19 @@ router.post('/', async (req, res, next) => {
 router.get('/add', (req, res, next) => {
     try {
         res.send(addPage());
+    } catch (err) {
+        next(err);
+    }
+});
+
+router.get('/:slug', async (req, res, next) => {
+    try {
+        const page = await Page.findOne({
+            where:
+                { slug: req.params.slug }
+        })
+        const author = await User.findById(page.authorId)
+        res.send(wikiPage(page, author));
     } catch (err) {
         next(err);
     }

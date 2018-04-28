@@ -13,7 +13,7 @@ app.use(bodyParser());
 app.use(express.static(__dirname + '/public'));
 
 app.use('/wiki', wiki);
-// app.use(user);
+app.use('/user', user);
 
 app.get('/', (req, res, next) => {
   try {
@@ -26,7 +26,7 @@ app.get('/', (req, res, next) => {
 const Port = 1337;
 
 const init = async () => {
-  await models.db.sync({ force: true });
+  await models.db.sync({ force: false });
 
   app.listen(Port, () => {
     console.log(`app listen on ${Port}`);

@@ -26,7 +26,6 @@ const Page = db.define('page', {
 
 Page.beforeValidate((page) => {
   page.slug = slugConverter(page.title)
-  // console.log(page)
 })
 
 const User = db.define('user', {
@@ -43,8 +42,10 @@ const User = db.define('user', {
   }
 })
 
+Page.belongsTo(User, { as: 'author' })
+
 function slugConverter(title) {
-  return title.replace(/\s+/g, '_').replace(/\W/g, '');
+  return title.replace(/\s+/g, '_').replace(/\W/g, '').toLowerCase();
 }
 
 module.exports = { db, Page, User }
